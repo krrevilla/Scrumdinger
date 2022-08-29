@@ -1,14 +1,11 @@
-//
-//  EditDetailView.swift
-//  Scrumdinger
-//
-//  Created by Pong on 8/27/22.
-//
+/*
+See LICENSE folder for this sample’s licensing information.
+*/
 
 import SwiftUI
 
-struct EditDetailView: View {
-    @State private var data = DailyScrum.Data()
+struct DetailEditView: View {
+    @Binding var data: DailyScrum.Data
     @State private var newAttendeeName = ""
     
     var body: some View {
@@ -24,13 +21,15 @@ struct EditDetailView: View {
                     Text("\(Int(data.lengthInMinutes)) minutes")
                         .accessibilityHidden(true)
                 }
+                ThemePicker(selection: $data.theme)
             }
-            
             Section(header: Text("Attendees")) {
                 ForEach(data.attendees) { attendee in
                     Text(attendee.name)
                 }
-                .onDelete { data.attendees.remove(atOffsets: $0) }
+                .onDelete { indices in
+                    data.attendees.remove(atOffsets: indices)
+                }
                 HStack {
                     TextField("New Attendee", text: $newAttendeeName)
                     Button(action: {
@@ -41,7 +40,7 @@ struct EditDetailView: View {
                         }
                     }) {
                         Image(systemName: "plus.circle.fill")
-                            .accessibilityLabel("Add Attendee")
+                            .accessibilityLabel("Add attendee")
                     }
                     .disabled(newAttendeeName.isEmpty)
                 }
@@ -50,8 +49,8 @@ struct EditDetailView: View {
     }
 }
 
-struct EditDetailView_Previews: PreviewProvider {
+struct DetailEditView_Previews: PreviewProvider {
     static var previews: some View {
-        EditDetailView()
+        DetailEditView(data: .constant(DailyScrum.sampleData[0].data))
     }
 }
